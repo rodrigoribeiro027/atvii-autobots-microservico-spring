@@ -7,12 +7,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
 
 import lombok.Data;
 
-@Data
+
 @Entity
-public class Documento {
+public class Documento extends RepresentationModel<Documento> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -40,8 +41,5 @@ public class Documento {
 	}
 	public void setNumero(String numero) {
 		this.numero = numero;
-	}
-	public void add(Link linkProprio) {
-		this.add(linkProprio);
 	}
 }
