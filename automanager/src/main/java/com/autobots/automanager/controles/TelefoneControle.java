@@ -54,12 +54,41 @@ public class TelefoneControle {
 	}
 	
 	@PutMapping("/atualizarTelefone")
-	public void editarTelefonePorId(@RequestBody Telefone atualizacao) {
+	public ResponseEntity<?> editarTelefonePorId(@RequestBody Telefone atualizacao) {
+		HttpStatus status = HttpStatus.CONFLICT;
 		Telefone telefoneSelecionado = repositorioTelefone.getById(atualizacao.getId());
-		TelefoneAtualizador atualizador = new TelefoneAtualizador();
-		atualizador.atualizar(telefoneSelecionado, atualizacao);
-		repositorioTelefone.save(telefoneSelecionado);
+		if(telefoneSelecionado != null) {
+			TelefoneAtualizador atualizador = new TelefoneAtualizador();
+			atualizador.atualizar(telefoneSelecionado, atualizacao);
+			repositorioTelefone.save(telefoneSelecionado);
+			status = HttpStatus.OK;
+		}
+		else {
+			status = HttpStatus.BAD_REQUEST;		
+		}
+		return new ResponseEntity<>(status);
 	}
 	
+	@DeleteMapping("/deletarTelefone/{id}")
+	public ResponseEntity<?> excluirTelefone(@PathVariable long id){
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		List<Cliente> alvo = repositorio.findAll();			
+		if (alvo !=null) {
+			for(Cliente cliente: alvo) {
+				for (Telefone telefone: cliente.getTelefones()) {
+					if (telefone.getId() == id) {
+						cliente.getTelefones().remove(telefone);
+						repositorio.save(cliente);
+						break;
+					}
+			}
+				
+			}
+		
+		
+		status = HttpStatus.OK;	
+	}
+	return new ResponseEntity<>(status);
+}
 	
 }

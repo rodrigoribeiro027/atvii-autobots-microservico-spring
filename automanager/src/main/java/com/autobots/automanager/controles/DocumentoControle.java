@@ -42,6 +42,10 @@ public class DocumentoControle {
 	@GetMapping("/documentos")
 	public ResponseEntity<List<Documento>> obterDocumentos(){
 		List<Documento> documentos = repositoriodoc.findAll();
+		for(Documento documento: documentos) {
+			adicionadorLink.adicionarLinkUpdate(documento);
+			adicionadorLink.adicionarLinkDelete(documento);			
+		}
 		
 		adicionadorLink.adicionarLink(documentos);
 		return new ResponseEntity<List<Documento>>(documentos,HttpStatus.FOUND);
@@ -55,6 +59,7 @@ public class DocumentoControle {
 			status = HttpStatus.NOT_FOUND;
 		}
 		else{
+			
 			adicionadorLink.adicionarLink(documento);
 			status = HttpStatus.FOUND;
 		}
@@ -62,19 +67,21 @@ public class DocumentoControle {
 	}
 	
 	@DeleteMapping("/excluir/{id}")
-	public ResponseEntity<?> excluirDocumento(@PathVariable long id, @RequestBody Cliente exclusao) {
+	public ResponseEntity<?> excluirDocumento(@PathVariable Long id) {
 		HttpStatus status = HttpStatus.BAD_REQUEST;
-		Cliente alvo = repositorio.getById(id);
-		
+		List<Cliente> alvo = repositorio.findAll();		
 		if (alvo != null) {
-			List<Documento> documentos = alvo.getDocumentos(); 
-			for (Documento documento : documentos) { 
-				if (documento.getId() == exclusao.getDocumentos().get(0).getId()) {
-					alvo.getDocumentos().remove(documento);
-					break;
-				}
+			for(Cliente cliente: alvo) {
+				for (Documento documento: cliente.getDocumentos()) {
+					if(documento.getId() == id) {
+						cliente.getDocumentos().remove(documento);
+						repositorio.save(cliente);
+						break;
+					}
+			
 			}
-			repositorio.save(alvo); 
+			}
+			 
 			status = HttpStatus.OK;
 		}
 

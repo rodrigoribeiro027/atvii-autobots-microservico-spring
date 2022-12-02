@@ -43,6 +43,8 @@ public class ClienteControle {
 		} 
 		else {
 			adicionadorLink.adicionarLink(cliente);
+			adicionadorLink.adicionarLinkUpdate(cliente);
+			adicionadorLink.adicionarLinkDelete(cliente);
 			ResponseEntity<Cliente> resposta = new ResponseEntity<Cliente>(cliente, HttpStatus.FOUND);
 			return resposta;
 		}
@@ -98,6 +100,9 @@ public class ClienteControle {
 			return resposta;
 		} 
 		else {
+			for(Cliente cliente: clientes) {
+				adicionadorLink.adicionarLinkUpdate(cliente);
+			}
 			adicionadorLink.adicionarLink(clientes);
 			ResponseEntity<List<Cliente>> resposta = new ResponseEntity<>(clientes, HttpStatus.FOUND);
 			return resposta;
@@ -109,8 +114,8 @@ public class ClienteControle {
 	@PostMapping("/cliente/cadastro")
 	public ResponseEntity<?> cadastrarCliente(@RequestBody Cliente cliente) {
 		HttpStatus status = HttpStatus.CONFLICT;
-		if (cliente.getId() == null) {
-			repositorio.save(cliente);
+		Cliente clientecadastrado = repositorio.save(cliente);		
+		if (clientecadastrado.getId() != null) {
 			status = HttpStatus.CREATED;
 		}
 		return new ResponseEntity<>(status);

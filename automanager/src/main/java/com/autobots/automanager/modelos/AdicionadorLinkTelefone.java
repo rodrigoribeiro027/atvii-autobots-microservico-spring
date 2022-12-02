@@ -6,7 +6,10 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
+import com.autobots.automanager.controles.DocumentoControle;
+import com.autobots.automanager.controles.EnderecoControle;
 import com.autobots.automanager.controles.TelefoneControle;
+import com.autobots.automanager.entidades.Endereco;
 import com.autobots.automanager.entidades.Telefone;
 @Component
 public class AdicionadorLinkTelefone implements AdicionadorLink<Telefone> {
@@ -45,5 +48,27 @@ public class AdicionadorLinkTelefone implements AdicionadorLink<Telefone> {
 			.withSelfRel();
 		objeto.add(linkProprio);
 		
+	}
+
+	@Override
+	public void adicionarLinkUpdate(Telefone objeto) {		
+			Link linkProprio = WebMvcLinkBuilder
+					.linkTo(WebMvcLinkBuilder
+							.methodOn(TelefoneControle.class)
+							.editarTelefonePorId(objeto))
+					.withRel("clientes");
+			objeto.add(linkProprio);
+		
+	}
+
+	@Override
+	public void adicionarLinkDelete(Telefone objeto) {
+		Long id = objeto.getId();
+		Link linkProprio = WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder
+						.methodOn(TelefoneControle.class)
+						.excluirTelefone(id))
+				.withSelfRel();
+		objeto.add(linkProprio);
 	}
 }

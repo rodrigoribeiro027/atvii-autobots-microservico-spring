@@ -6,7 +6,10 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
+import com.autobots.automanager.controles.ClienteControle;
+import com.autobots.automanager.controles.DocumentoControle;
 import com.autobots.automanager.controles.EnderecoControle;
+import com.autobots.automanager.entidades.Cliente;
 import com.autobots.automanager.entidades.Endereco;
 
 @Component
@@ -38,5 +41,26 @@ public class AdicionadorLinkEndereco implements AdicionadorLink<Endereco> {
 	@Override
 	public void adicionarLinkCriar(Endereco objeto) {
 		
+	}
+
+	@Override
+	public void adicionarLinkUpdate(Endereco objeto) {
+		Link linkProprio = WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder
+						.methodOn(EnderecoControle.class)
+						.atualizarEndereco(objeto))
+				.withRel("clientes");
+		objeto.add(linkProprio);
+	}
+
+	@Override
+	public void adicionarLinkDelete(Endereco objeto) {		
+		Long id = objeto.getId();
+		Link linkProprio = WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder
+						.methodOn(EnderecoControle.class)
+						.excluirEnderecos(id))
+				.withSelfRel();
+		objeto.add(linkProprio);
 	}
 }

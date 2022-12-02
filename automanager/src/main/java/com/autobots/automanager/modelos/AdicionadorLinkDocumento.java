@@ -44,4 +44,22 @@ public class AdicionadorLinkDocumento implements AdicionadorLink<Documento> {
 		objeto.add(linkProprio);
 		
 	}
+
+	@Override
+	public void adicionarLinkUpdate(Documento objeto) {
+		
+		
+	}
+
+	@Override
+	public void adicionarLinkDelete(Documento objeto) {
+		Long id = objeto.getId();
+		Link linkProprio = WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder
+						.methodOn(DocumentoControle.class)
+						.excluirDocumento(id))
+				.withSelfRel();
+		objeto.add(linkProprio);
+		
+	}
 }

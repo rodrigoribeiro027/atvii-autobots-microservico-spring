@@ -64,18 +64,42 @@ public class EnderecoControle {
 		}
 	}
 	@PutMapping("/atualizarEndereco")
-	private void atualizarEndereco(@RequestBody Endereco atualizacao) {
+	
+	public ResponseEntity<?> atualizarEndereco(@RequestBody Endereco atualizacao) {
+		HttpStatus status = HttpStatus.CONFLICT;
 		Endereco selecionado = repositorioEndereco.getById(atualizacao.getId());
-		EnderecoAtualizador atualizador = new EnderecoAtualizador();
-		atualizador.atualizar(selecionado, atualizacao);
-		repositorioEndereco.save(selecionado);
+		if(selecionado != null) {
+			EnderecoAtualizador atualizador = new EnderecoAtualizador();
+			atualizador.atualizar(selecionado, atualizacao);
+			repositorioEndereco.save(selecionado);
+			status = HttpStatus.OK;
 		}
-	@DeleteMapping("/DeletarEnderecos")
-	public void excluirEnderecos(@RequestBody Cliente excluir) {
-		Cliente selecionado = repositorioCliente.getById(excluir.getId());
-		repositorioEndereco.delete(selecionado.getEndereco());
-		selecionado.setEndereco(null);
-		repositorioCliente.save(selecionado);
+		else {
+			status = HttpStatus.BAD_REQUEST;
+		}
+		return new ResponseEntity<>(status);
+	}
+	
+		
+		
+	@DeleteMapping("/deletarEndereco/{id}")
+	public ResponseEntity<?> excluirEnderecos(@PathVariable Long id) {
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		List<Cliente> alvos = repositorioCliente.findAll();
+		if (alvos != null) {
+			for (Cliente cliente: alvos) {
+				if(cliente.getEndereco().getId() == id) {
+					repositorioEndereco.delete(cliente.getEndereco());
+					cliente.setEndereco(null);
+					repositorioCliente.save(cliente);
+					status = HttpStatus.OK;
+				}
+				
+				
+			}
+		}
+		return new ResponseEntity<>(status);
+		
 	}
 	
 }
